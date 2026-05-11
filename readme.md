@@ -26,7 +26,7 @@ Aplicativo mobile para gestão de saúde de pets, desenvolvido para o Challenge 
 ### Instalação
 ```bash
 # Clone o repositório
-git clone [seu-repositorio]
+git clone [https://github.com/Fabriciopereira-sp/mobile_challenge.git]
 
 # Entre na pasta
 cd clyvo-vet-app
