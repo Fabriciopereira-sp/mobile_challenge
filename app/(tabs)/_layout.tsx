@@ -1,4 +1,5 @@
 import { Tabs } from 'expo-router';
+// @ts-ignore
 import { Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
@@ -14,10 +15,17 @@ export default function TabLayout() {
       <Tabs.Screen
         name="meu-pet"
         options={{
-          title: 'Meu Pet',
+          title: 'Cadastro',
           tabBarIcon: ({ color }) => <Ionicons name="paw" size={24} color={color} />,
         }}
       />
-    </Tabs>
+      <Tabs.Screen
+        name="historico"
+        options={{
+          title: 'Histórico',
+          tabBarIcon: ({ color }) => <Ionicons name="list" size={24} color={color} />,
+        }}
+      />
+    </Tabs> 
   );
 }
