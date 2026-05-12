@@ -1,54 +1,55 @@
-# 🐾 CLYVO VET - Aplicativo Mobile
+# 🐾 CLYVO VET — Mobile App
 
-## 📱 Sobre o Projeto
-Aplicativo mobile para gestão de saúde de pets, desenvolvido para o Challenge FIAP 2026 em parceria com a CLYVO VET.
+Aplicativo mobile desenvolvido para o **FIAP Challenge 2026** em parceria com a **CLYVO VET**.
 
-## 🎯 Funcionalidades
-- ✅ Cadastro de pets com formulário completo
-- ✅ Lista de pets cadastrados
-- ✅ Visualização de detalhes de cada pet
-- ✅ Sistema de lembretes de vacinas e consultas
-- ✅ Persistência local com AsyncStorage
+## 📋 Sobre o Projeto
 
-## 🛠️ Tecnologias Utilizadas
-- React Native
-- Expo SDK
-- Expo Router (navegação)
-- AsyncStorage (persistência)
-- JavaScript
+Plataforma que conecta tutores de pets ao veterinário de forma digital.
+O tutor cadastra o pet com histórico completo, descreve os sintomas e gera um relatório.
+O veterinário visualiza, responde com diagnóstico e tratamento, e o tutor recebe o retorno — tudo salvo localmente.
 
-## 📦 Como Executar
+## 📱 Telas (6 rotas navegáveis)
 
-### Pré-requisitos
-- Node.js instalado
-- Expo Go instalado no celular (Android/iOS)
+| Tela | Descrição |
+|------|-----------|
+| Início | Login/cadastro e dashboard |
+| Meu Pet | Cadastro do pet + formulário de consulta |
+| Histórico | Consultas salvas com AsyncStorage |
+| Lembretes | Vacinas e remédios agendados |
+| Sobre | Informações do app e equipe |
+| Relatório | Visualização completa + resposta do veterinário |
 
-### Instalação
+## ✅ Requisitos atendidos
+
+- [x] Navegação com Expo Router (6 rotas)
+- [x] Protótipo visual completo e coerente
+- [x] Formulários com useState em todas as telas
+- [x] AsyncStorage — dados persistidos e restaurados ao reabrir
+- [x] Demonstração em vídeo
+
+## 🚀 Como rodar
+
 ```bash
-# Clone o repositório
-git clone [https://github.com/Fabriciopereira-sp/mobile_challenge.git]
-
-# Entre na pasta
-cd clyvo-vet-app
-
-# Instale as dependências
+git clone https://github.com/SEU_USUARIO/Mobile_clyvo.git
+cd Mobile_clyvo
 npm install
-
-# Execute o projeto
 npx expo start
 ```
 
-## 📱 Como Testar
-1. Execute `npx expo start`
-2. Escaneie o QR Code com o Expo Go
-3. Cadastre um pet no formulário
-4. Veja a lista de pets
-5. Feche e reabra o app para verificar a persistência
+Escaneie o QR Code com o **Expo Go** no celular.
+
+## 🛠 Tecnologias
+
+- React Native + Expo SDK 54
+- Expo Router
+- AsyncStorage
+- TypeScript
 
 ## 👥 Equipe
-- [Fabrício Henrique Pereira] - RM [563237]
-- [Miguel Henrique Oliveira Dias] - RM [565492]
-- [Pedro Henrique de Oliveira ] - RM [562312]
-- [Leonardo José Pereira] - RM [563065]
 
-## 📄 Estrutura do Projeto
+- Fabrício Henrique Pereira — RM 563237
+- Miguel Henrique Oliveira Dias — RM 565492
+- Pedro Henrique de Oliveira — RM 562312
+- Leonardo José Pereira — RM 563065
+
+**FIAP 2026 · Análise e Desenvolvimento de Sistemas**

@@ -1,122 +1,137 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
+import {
+  View, Text, StyleSheet, ScrollView,
+  TextInput, TouchableOpacity, Alert, SafeAreaView,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from 'expo-router';
+import { colors } from '../../constants/colors';
 
 export default function Lembretes() {
   const [titulo, setTitulo] = useState('');
   const [data, setData] = useState('');
-  const [listaLembretes, setListaLembretes] = useState<any[]>([]);
-
-  // Carrega os lembretes do banco toda vez que você abre a aba
-  const carregarLembretes = async () => {
-    try {
-      const valor = await AsyncStorage.getItem('@lembretes_pet');
-      if (valor !== null) {
-        setListaLembretes(JSON.parse(valor));
-      }
-    } catch (e) {
-      console.error("Erro ao carregar lembretes", e);
-    }
-  };
+  const [lista, setLista] = useState<any[]>([]);
 
   useFocusEffect(
     React.useCallback(() => {
-      carregarLembretes();
+      async function carregar() {
+        const salvo = await AsyncStorage.getItem('@lembretes_pet');
+        setLista(salvo ? JSON.parse(salvo) : []);
+      }
+      carregar();
     }, [])
   );
 
-  const adicionarLembrete = async () => {
-    if (!titulo || !data) {
-      return Alert.alert("Erro", "Preencha o nome da vacina e a data.");
+  async function adicionar() {
+    if (!titulo.trim() || !data.trim()) {
+      return Alert.alert('Atenção', 'Preencha o nome e a data do lembrete.');
     }
-
-    const novoLembrete = {
-      id: Math.random().toString(),
-      titulo,
-      data,
-      status: 'pendente'
-    };
-
-    const novaLista = [...listaLembretes, novoLembrete];
-    setListaLembretes(novaLista);
+    const novo = { id: Date.now().toString(), titulo: titulo.trim(), data: data.trim() };
+    const novaLista = [novo, ...lista];
+    setLista(novaLista);
     await AsyncStorage.setItem('@lembretes_pet', JSON.stringify(novaLista));
-    
     setTitulo('');
     setData('');
-    Alert.alert("Sucesso", "Lembrete de vacina adicionado!");
-  };
+    Alert.alert('✅ Adicionado!', 'Lembrete salvo com sucesso.');
+  }
 
-  const removerLembrete = async (id: string) => {
-    const filtrados = listaLembretes.filter(item => item.id !== id);
-    setListaLembretes(filtrados);
-    await AsyncStorage.setItem('@lembretes_pet', JSON.stringify(filtrados));
-  };
+  async function remover(id: string) {
+    Alert.alert('Remover', 'Deseja remover este lembrete?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Remover', style: 'destructive',
+        onPress: async () => {
+          const nova = lista.filter(i => i.id !== id);
+          setLista(nova);
+          await AsyncStorage.setItem('@lembretes_pet', JSON.stringify(nova));
+        },
+      },
+    ]);
+  }
 
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <Text style={styles.title}>Petrack 📅</Text>
-        <Text style={styles.subtitle}>Agende vacinas e remédios</Text>
+        <Text style={styles.headerTitulo}>💉 Lembretes</Text>
+        <Text style={styles.headerSub}>Vacinas, remédios e consultas</Text>
       </View>
 
-      {/* Formulário de Adição */}
-      <View style={styles.form}>
-        <TextInput 
-          style={styles.input} 
-          placeholder="Nome da Vacina (ex: V10)" 
-          value={titulo} 
-          onChangeText={setTitulo} 
-        />
-        <TextInput 
-          style={styles.input} 
-          placeholder="Data (ex: 20/05)" 
-          value={data} 
-          onChangeText={setData} 
-        />
-        <TouchableOpacity style={styles.btnAdicionar} onPress={adicionarLembrete}>
-          <Text style={styles.btnText}>+ ADICIONAR AGENDAMENTO</Text>
-        </TouchableOpacity>
-      </View>
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
-      {/* Lista Funcional */}
-      <View style={styles.listaContainer}>
-        <Text style={styles.listaTitle}>Próximos Compromissos:</Text>
-        {listaLembretes.length === 0 ? (
-          <Text style={styles.emptyText}>Nenhum lembrete agendado.</Text>
+        <View style={styles.formulario}>
+          <Text style={styles.formularioTitulo}>Adicionar lembrete</Text>
+          <Text style={styles.label}>Descrição</Text>
+          <TextInput
+            style={styles.input}
+            value={titulo}
+            onChangeText={setTitulo}
+            placeholder="Ex: Vacina V10, Antipulgas..."
+            placeholderTextColor={colors.textLight}
+          />
+          <Text style={styles.label}>Data</Text>
+          <TextInput
+            style={styles.input}
+            value={data}
+            onChangeText={setData}
+            placeholder="Ex: 20/06/2025"
+            placeholderTextColor={colors.textLight}
+          />
+          <TouchableOpacity style={styles.btnAdicionar} onPress={adicionar}>
+            <Text style={styles.btnAdicionarText}>+ Adicionar Lembrete</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.secaoTitulo}>
+          Agendamentos ({lista.length})
+        </Text>
+
+        {lista.length === 0 ? (
+          <View style={styles.vazio}>
+            <Text style={styles.vazioEmoji}>📅</Text>
+            <Text style={styles.vazioTexto}>Nenhum lembrete cadastrado ainda.</Text>
+          </View>
         ) : (
-          listaLembretes.map((item) => (
+          lista.map((item) => (
             <View key={item.id} style={styles.card}>
-              <View style={styles.cardInfo}>
-                <Text style={styles.cardTitulo}>💉 {item.titulo}</Text>
-                <Text style={styles.cardData}>Data: {item.data}</Text>
+              <View style={styles.cardIcone}>
+                <Text style={{ fontSize: 22 }}>💉</Text>
               </View>
-              <TouchableOpacity onPress={() => removerLembrete(item.id)}>
-                <Text style={styles.btnExcluir}>❌</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.cardTitulo}>{item.titulo}</Text>
+                <Text style={styles.cardData}>📅 {item.data}</Text>
+              </View>
+              <TouchableOpacity onPress={() => remover(item.id)} style={styles.btnRemover}>
+                <Text style={styles.btnRemoverText}>✕</Text>
               </TouchableOpacity>
             </View>
           ))
         )}
-      </View>
-    </ScrollView>
+
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8f9fa' },
-  header: { padding: 25, backgroundColor: '#2ecc71' },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
-  subtitle: { color: '#e8f5e9', fontSize: 14 },
-  form: { padding: 20, backgroundColor: '#fff', margin: 15, borderRadius: 12, elevation: 3 },
-  input: { borderBottomWidth: 1, borderColor: '#eee', padding: 10, marginBottom: 15, fontSize: 16 },
-  btnAdicionar: { backgroundColor: '#2ecc71', padding: 15, borderRadius: 8, alignItems: 'center' },
-  btnText: { color: '#fff', fontWeight: 'bold' },
-  listaContainer: { padding: 20 },
-  listaTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 15, color: '#2c3e50' },
-  card: { backgroundColor: '#fff', padding: 15, borderRadius: 10, marginBottom: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', elevation: 1 },
-  cardInfo: { flex: 1 },
-  cardTitulo: { fontSize: 16, fontWeight: 'bold', color: '#2c3e50' },
-  cardData: { color: '#7f8c8d', marginTop: 3 },
-  btnExcluir: { padding: 10 },
-  emptyText: { textAlign: 'center', color: '#95a5a6', marginTop: 20 }
+  safe: { flex: 1, backgroundColor: colors.background },
+  header: { backgroundColor: colors.primary, padding: 20, paddingTop: 50 },
+  headerTitulo: { color: colors.white, fontSize: 22, fontWeight: 'bold' },
+  headerSub: { color: '#94A3B8', fontSize: 13, marginTop: 4 },
+  scroll: { padding: 16, paddingBottom: 30 },
+  formulario: { backgroundColor: colors.white, borderRadius: 14, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: colors.border },
+  formularioTitulo: { fontSize: 15, fontWeight: 'bold', color: colors.primary, marginBottom: 14, borderLeftWidth: 4, borderLeftColor: colors.primary, paddingLeft: 10 },
+  label: { fontSize: 13, fontWeight: '600', color: colors.textLight, marginBottom: 6, marginTop: 10 },
+  input: { backgroundColor: colors.background, borderRadius: 10, borderWidth: 1, borderColor: colors.border, padding: 12, fontSize: 15, color: colors.text },
+  btnAdicionar: { backgroundColor: colors.primary, borderRadius: 12, padding: 14, alignItems: 'center', marginTop: 16 },
+  btnAdicionarText: { color: colors.white, fontWeight: 'bold', fontSize: 15 },
+  secaoTitulo: { fontSize: 16, fontWeight: 'bold', color: colors.text, marginBottom: 12 },
+  vazio: { alignItems: 'center', paddingTop: 30 },
+  vazioEmoji: { fontSize: 48, marginBottom: 10 },
+  vazioTexto: { color: colors.textLight, fontSize: 15 },
+  card: { backgroundColor: colors.white, borderRadius: 12, padding: 14, marginBottom: 10, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: colors.border, elevation: 1 },
+  cardIcone: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  cardTitulo: { fontSize: 15, fontWeight: '600', color: colors.text },
+  cardData: { fontSize: 13, color: colors.textLight, marginTop: 3 },
+  btnRemover: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.dangerLight, alignItems: 'center', justifyContent: 'center' },
+  btnRemoverText: { color: colors.danger, fontWeight: 'bold', fontSize: 14 },
 });
