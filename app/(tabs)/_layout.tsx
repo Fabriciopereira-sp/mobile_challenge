@@ -1,7 +1,6 @@
 import { Tabs } from 'expo-router';
 import { View, Text } from 'react-native';
 import { colors } from '../../constants/colors';
-
 function Icone({ emoji, focado }: { emoji: string; focado: boolean }) {
   return (
     <View style={{
@@ -16,7 +15,6 @@ function Icone({ emoji, focado }: { emoji: string; focado: boolean }) {
     </View>
   );
 }
-
 export default function TabLayout() {
   return (
     <Tabs

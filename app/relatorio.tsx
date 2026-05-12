@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { colors } from '../../constants/colors';
+import { colors } from '../constants/colors';
 
 export default function Relatorio() {
   const router = useRouter();
